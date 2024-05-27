@@ -1,45 +1,75 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
-from .models import User
-from .crypto import SimpleCrypt
-from .signature import SimpleSign
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.views import LoginView
+from django.shortcuts import HttpResponseRedirect
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, RedirectView
 
-SECRET_KEY = 5  # Change this to a secure secret key
+from .forms import UserRegistrationForm, UserAddressForm
 
-crypt = SimpleCrypt(SECRET_KEY)
-sign = SimpleSign(SECRET_KEY)
 
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            # Encrypt username for session
-            encrypted_username = crypt.encrypt(username)
-            request.session['encrypted_username'] = encrypted_username
-            # Sign username for session integrity
-            signature = sign.sign(encrypted_username)
-            request.session['signature'] = signature
-            return redirect('index')
-        else:
-            return HttpResponse("Invalid username or password")
-    else:
-        return render(request, 'accounts/login.html')
+User = get_user_model()
 
-def logout_user(request):
-    # Decrypt username from session
-    encrypted_username = request.session.get('encrypted_username')
-    if encrypted_username:
-        username = crypt.decrypt(encrypted_username)
-        # Verify username integrity
-        signature = request.session.get('signature')
-        if sign.verify(encrypted_username, signature):
-            logout(request)
-            return HttpResponse(f"Logged out successfully. User: {username}")
-        else:
-            return HttpResponse("Session integrity compromised")
-    else:
-        return HttpResponse("User not logged in")
+
+class UserRegistrationView(TemplateView):
+    model = User
+    form_class = UserRegistrationForm
+    template_name = 'accounts/user_registration.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return HttpResponseRedirect(
+                reverse_lazy('transactions:transaction_report')
+            )
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        registration_form = UserRegistrationForm(self.request.POST)
+        address_form = UserAddressForm(self.request.POST)
+
+        if registration_form.is_valid() and address_form.is_valid():
+            user = registration_form.save()
+            address = address_form.save(commit=False)
+            address.user = user
+            address.save()
+
+            login(self.request, user)
+            messages.success(
+                self.request,
+                (
+                    f'Thank You For Creating A Bank Account. '
+                    f'Your Account Number is {user.account.account_no}. '
+                )
+            )
+            return HttpResponseRedirect(
+                reverse_lazy('transactions:deposit_money')
+            )
+
+        return self.render_to_response(
+            self.get_context_data(
+                registration_form=registration_form,
+                address_form=address_form
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        if 'registration_form' not in kwargs:
+            kwargs['registration_form'] = UserRegistrationForm()
+        if 'address_form' not in kwargs:
+            kwargs['address_form'] = UserAddressForm()
+
+        return super().get_context_data(**kwargs)
+
+
+class UserLoginView(LoginView):
+    template_name='accounts/user_login.html'
+    redirect_authenticated_user = True
+
+
+class LogoutView(RedirectView):
+    pattern_name = 'home'
+
+    def get_redirect_url(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            logout(self.request)
+        return super().get_redirect_url(*args, **kwargs)
