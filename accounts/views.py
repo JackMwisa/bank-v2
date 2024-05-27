@@ -1,11 +1,17 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth.views import LoginView
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .forms import UserRegistrationForm, UserAddressForm
+
+from django.views.generic import View
+from .custom_crypto_v1 import CustomCrypto  # Import your custom encryption module
+
+
 
 
 User = get_user_model()
@@ -64,6 +70,30 @@ class UserRegistrationView(TemplateView):
 class UserLoginView(LoginView):
     template_name='accounts/user_login.html'
     redirect_authenticated_user = True
+    
+    # encryption
+    
+    # def post(self, request, *args, **kwargs):
+    #     username = request.POST.get('username')
+    #     password = request.POST.get('password')
+
+    #     # Encrypt the login credentials
+    #     encrypted_username = CustomCrypto.encrypt(username)
+    #     encrypted_password = CustomCrypto.encrypt(password)
+
+    #     # Perform authentication with encrypted credentials
+    #     user = authenticate(request, username=encrypted_username, password=encrypted_password)
+
+    #     if user is not None:
+    #         login(request, user)
+    #         return HttpResponseRedirect(reverse_lazy('home'))  # Replace 'home' with your desired redirect URL
+    #     else:
+    #         # Authentication failed
+    #         messages.error(request, 'Invalid username or password')
+    #         return HttpResponseRedirect(reverse_lazy('accounts:user_login'))  # Redirect back to login page
+    
+
+
 
 
 class LogoutView(RedirectView):
