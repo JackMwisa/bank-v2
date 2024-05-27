@@ -9,7 +9,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import UserRegistrationForm, UserAddressForm
 
 from django.views.generic import View
-from .custom_crypto_v1 import CustomCrypto  # Import your custom encryption module
+from .custom_crypto import CustomCrypto  # Import your custom encryption module
 
 
 
