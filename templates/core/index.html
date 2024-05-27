@@ -1,24 +1,31 @@
 {% extends 'core/base.html' %}
 
-{% block head_title %}Banking System{% endblock %}
+{% block head_title %}Online Banking{% endblock %}
 
 {% block content %}
-    <div class="container mx-auto flex flex-col md:flex-row items-center my-12 md:my-24">
-        <!--Left Col-->
-        <div class="flex flex-col w-full lg:w-1/2 justify-center items-start pt-12 pb-24 px-6">
-            <h1 class="font-bold text-4xl my-4">Banking System</h1>
-            <p class="leading-normal mb-4">
-                This is an Example web application created using django.
-                You can find the sourse code on <a href="https://github.com/saadmk11/banking-system">GitHub</a>
-            </p>
-            <div>
-            <a href="{% url 'accounts:user_registration' %}" class="bg-transparent hover:bg-gray-800 text-gray-800 hover:text-white rounded shadow hover:shadow-lg py-2 px-4 border border-gray-900 hover:border-transparent">Register</a>
-            <a href="https://github.com/saadmk11/banking-system" class="bg-transparent hover:bg-gray-800 text-gray-800 hover:text-white rounded shadow hover:shadow-lg py-2 px-4 border border-gray-900 hover:border-transparent">GitHub</a>
-            </div>
-        </div>
-        <!--Right Col-->
-        <div class="w-full lg:w-1/2 lg:py-6 text-center">
-            <h1 style="font-size: 12rem" class="font-black text-gray-800">$$$</h1>
+<div class="container mx-auto flex flex-col md:flex-row items-center my-12 md:my-24">
+    <!--Left Col-->
+    <div class="flex flex-col w-full lg:w-1/2 justify-center items-start pt-12 pb-24 px-6">
+        <h1 class="font-bold text-4xl lg:text-5xl my-4 leading-tight">Online Banking</h1>
+        <p class="leading-normal mb-4 text-gray-600">
+            This is a web application created using the Django framework. You can find the source code on our website
+            <a href="#" class="text-blue-500 hover:underline">JK Inc.</a>.
+        </p>
+        <div class="mt-6">
+            <a href="{% url 'accounts:user_registration' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded shadow hover:shadow-lg py-2 px-4 mr-4">
+                Register
+            </a>
+            <a href="#" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded shadow hover:shadow-lg py-2 px-4">
+                GitHub
+            </a>
         </div>
     </div>
+    <!--Right Col-->
+    <div class="w-full lg:w-1/2 lg:py-6 text-center">
+        <div class="relative">
+            <h1 style="font-size: 12rem" class="font-black text-gray-800 absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 opacity-10 z-0">$$$</h1>
+            <img src="https://via.placeholder.com/500" alt="Online Banking" class="mx-auto rounded-lg shadow-lg z-10 relative">
+        </div>
+    </div>
+</div>
 {% endblock %}
