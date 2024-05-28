@@ -70,30 +70,6 @@ class UserRegistrationView(TemplateView):
 class UserLoginView(LoginView):
     template_name='accounts/user_login.html'
     redirect_authenticated_user = True
-    
-    # encryption
-    
-    # def post(self, request, *args, **kwargs):
-    #     username = request.POST.get('username')
-    #     password = request.POST.get('password')
-
-    #     # Encrypt the login credentials
-    #     encrypted_username = CustomCrypto.encrypt(username)
-    #     encrypted_password = CustomCrypto.encrypt(password)
-
-    #     # Perform authentication with encrypted credentials
-    #     user = authenticate(request, username=encrypted_username, password=encrypted_password)
-
-    #     if user is not None:
-    #         login(request, user)
-    #         return HttpResponseRedirect(reverse_lazy('home'))  # Replace 'home' with your desired redirect URL
-    #     else:
-    #         # Authentication failed
-    #         messages.error(request, 'Invalid username or password')
-    #         return HttpResponseRedirect(reverse_lazy('accounts:user_login'))  # Redirect back to login page
-    
-
-
 
 
 class LogoutView(RedirectView):
