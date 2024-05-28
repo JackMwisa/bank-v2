@@ -105,3 +105,4 @@ class HashMessageView(View):
         data = request.POST['data']
         hash_value = calculate_hash(data)
         return JsonResponse({'hash': hash_value})
+
