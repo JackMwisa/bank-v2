@@ -15,16 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-
+from django.conf import settings
 from core.views import HomeView
-
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('accounts/', include('allauth.urls')),  # Including allauth URLs
+    path('accounts/', include('allauth_2fa.urls')),  # Including allauth_2fa URLs
+    path('two_factor/', include('two_factor.urls', 'two_factor')),  # Including two_factor URLs separately
     path('admin/', admin.site.urls),
-    path(
-        'transactions/',
-        include('transactions.urls', namespace='transactions')
-    )
+    path('transactions/', include('transactions.urls', namespace='transactions')),
 ]
+
+# Optionally, serve static and media files during development
+if settings.DEBUG:
+    from django.conf.urls.static import static
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
